@@ -1,0 +1,38 @@
+---
+- name: "Make timezone London"
+  ansible.builtin.file:
+    src: /usr/share/zoneinfo/Europe/London
+    dest: /etc/localtime
+    state: link
+    force: true
+
+- name: "Reset timezone"
+  shell: /usr/sbin/dpkg-reconfigure --frontend noninteractive tzdata
+  become: true
+  become_method: sudo
+
+- name: "Mount shared folders on boot."
+  ansible.builtin.cron:
+    name: "Mount shared folders on boot."
+    special_time: reboot
+    job: "/usr/local/bin/mount-shared-folders"
+
+- name: "Add kali user to kali-trusted group to give them sudo nopasswd"
+  ansible.builtin.user:
+    name: kali
+    groups: kali-trusted
+    append: yes
+  become: true
+  become_method: sudo
+
+# - name: "Copying keyboard layout"
+#   copy:
+#     src: "{{ role_path }}/files/etc_default_keyboard"
+#     dest: "/etc/default/keyboard"
+#   become: true
+#   become_method: sudo
+
+# - name: "Reset keyboard"
+#   shell: /usr/sbin/dpkg-reconfigure --frontend noninteractive keyboard-configuration
+#   become: true
+#   become_method: sudo

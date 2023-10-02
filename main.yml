@@ -1,0 +1,19 @@
+---
+- name: "Customizing Kali"
+  hosts: localhost
+  connection: local
+  vars_prompt:
+    - name: NESSUS_KEY
+      prompt: Enter your Nessus licence key
+      private: false
+
+    - name: NESSUS_USER
+      prompt: Enter the Nessus username to use
+      private: false
+
+    - name: NESSUS_PASS
+      prompt: Enter the Nessus password to use
+  roles:
+    - role: "roles/install-tools"
+    - role: "roles/configure-tmux"
+    - role: "roles/configure-os"

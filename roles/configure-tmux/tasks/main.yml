@@ -1,0 +1,19 @@
+---
+- name: "Install tmux"
+  apt:
+    name: tmux
+    state: present
+  become: true
+  become_method: sudo
+
+- name: "Copying tmux Config"
+  copy:
+    src: "{{ role_path }}/files/.tmux.conf"
+    dest: "{{ ansible_env.HOME }}"
+
+- name: "Install tmux plugins"
+  git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.location }}"
+  loop:
+    - { repo: "https://github.com/tmux-plugins/tpm", location: "~/.tmux/plugins/tpm" }

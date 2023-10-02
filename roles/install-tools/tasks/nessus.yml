@@ -1,0 +1,31 @@
+---
+- name: "Install latest Nessus"
+  apt:
+    deb: https://www.tenable.com/downloads/api/v2/pages/nessus/files/Nessus-latest-debian10_amd64.deb
+  become: true
+  become_method: sudo
+
+- name: "Add user to Nessus"
+  ansible.builtin.expect:
+      command: /opt/nessus/sbin/nessuscli adduser
+      responses:
+        'Login:': "{{NESSUS_USER}}"
+        'Login password:': "{{NESSUS_PASS}}"
+        'Login password \(again\):': "{{NESSUS_PASS}}"
+        '\[n\]:': "y"
+        '\(the user can have an empty rules set\)': ""    
+  become: true
+  become_method: sudo
+
+- name: "Register Nessus"
+  shell: /opt/nessus/sbin/nessuscli fetch --register '{{NESSUS_KEY}}'
+  become: true
+  become_method: sudo
+
+- name: "Enable service nessusd and start it."
+  ansible.builtin.systemd:
+    name: nessusd
+    enabled: true
+    state: started
+  become: true
+  become_method: sudo
