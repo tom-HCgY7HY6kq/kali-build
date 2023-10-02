@@ -5,18 +5,6 @@
   become: true
   become_method: sudo
 
-- name: "Add user to Nessus"
-  ansible.builtin.expect:
-      command: /opt/nessus/sbin/nessuscli adduser
-      responses:
-        'Login:': "{{NESSUS_USER}}"
-        'Login password:': "{{NESSUS_PASS}}"
-        'Login password \(again\):': "{{NESSUS_PASS}}"
-        '\[n\]:': "y"
-        '\(the user can have an empty rules set\)': ""    
-  become: true
-  become_method: sudo
-
 - name: "Register Nessus"
   shell: /opt/nessus/sbin/nessuscli fetch --register '{{NESSUS_KEY}}'
   become: true
@@ -27,5 +15,17 @@
     name: nessusd
     enabled: true
     state: started
+  become: true
+  become_method: sudo
+
+  - name: "Add user to Nessus"
+  ansible.builtin.expect:
+      command: /opt/nessus/sbin/nessuscli adduser
+      responses:
+        'Login:': "{{NESSUS_USER}}"
+        'Login password:': "{{NESSUS_PASS}}"
+        'Login password \(again\):': "{{NESSUS_PASS}}"
+        '\[n\]:': "y"
+        '\(the user can have an empty rules set\)': ""    
   become: true
   become_method: sudo
