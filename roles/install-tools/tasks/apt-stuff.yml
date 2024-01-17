@@ -22,6 +22,7 @@
       - remmina
       - sshesame
       - ncat
+      - neo4j
     state: latest
   become: true
   become_method: sudo
