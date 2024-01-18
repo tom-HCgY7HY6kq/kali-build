@@ -12,6 +12,8 @@
     - { repo: "https://github.com/PowerShellMafia/PowerSploit.git", location: "/opt/PowerSploit" }
     - { repo: "https://github.com/s0lst1c3/eaphammer.git", location: "/opt/eaphammer" }
     - { repo: "https://github.com/derv82/wifite2.git", location: "/opt/wifite2" }
+    - { repo: "https://github.com/jaksi/sshesame.git", location: "/opt/sshesame" }
+    - { repo: "https://github.com/GoSecure/pywsus.git", location: "/opt/pywsus" }
   become: true
   become_method: sudo
 
