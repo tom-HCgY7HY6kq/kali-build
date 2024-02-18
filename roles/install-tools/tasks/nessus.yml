@@ -1,14 +1,33 @@
 ---
+- name: "Check if Nessus is installed"
+  tags: dev
+  shell: "systemctl --all --type service | grep -q nessusd"
+  register: nessus_installed
+  failed_when: "nessus_installed.rc == 2"
+  check_mode: no
+  changed_when: false
+
+- name: "Check if Nessus user exists"
+  tags: dev
+  shell: "/opt/nessus/sbin/nessuscli lsuser | wc -l"
+  register: nessus_user_exists
+  become: true
+  check_mode: no
+  when: "nessus_installed.rc == 0"
+  changed_when: false
+
 - name: "Install latest Nessus"
   apt:
     deb: https://www.tenable.com/downloads/api/v2/pages/nessus/files/Nessus-latest-debian10_amd64.deb
   become: true
   become_method: sudo
+  when: nessus_installed.rc == 1
 
 - name: "Register Nessus"
   shell: /opt/nessus/sbin/nessuscli fetch --register '{{NESSUS_KEY}}'
   become: true
   become_method: sudo
+  when: nessus_installed.rc == 1
 
 - name: "Enable service nessusd and start it."
   ansible.builtin.systemd:
@@ -22,11 +41,12 @@
   ansible.builtin.expect:
       command: /opt/nessus/sbin/nessuscli adduser
       responses:
-        'Login:': "{{NESSUS_USER}}"
-        'Login password:': "{{NESSUS_PASS}}"
-        'Login password \(again\):': "{{NESSUS_PASS}}"
-        '\[n\]:': "y"
-        '\(the user can have an empty rules set\)': ""    
+        (.*)Login:(.*): "{{NESSUS_USER}}"
+        (.*)Login password(.*): "{{NESSUS_PASS}}"
+        (.*)Login password(.*):': "{{NESSUS_PASS}}"
+        (.*)system administrator(.*): "y"
+        (.*)rules set(.*): "\n"
+        (.*)ok(.*): "y"
   become: true
   become_method: sudo
-  ignore_errors: true
+  when: nessus_user_exists.stdout == "0"
