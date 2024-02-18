@@ -5,11 +5,15 @@
     dest: /etc/localtime
     state: link
     force: true
+  become: true
+  become_method: sudo
+  register: tzconfig
 
 - name: "Reset timezone"
   shell: /usr/sbin/dpkg-reconfigure --frontend noninteractive tzdata
   become: true
   become_method: sudo
+  when: tzconfig.changed
 
 - name: "Mount shared folders on boot."
   ansible.builtin.cron:
