@@ -16,12 +16,21 @@
   when: "nessus_installed.rc == 0"
   changed_when: false
 
+- name: "Fallback if nessus not install"
+  tags: dev
+  shell: "echo 0"
+  register: nessus_user_exists
+  become: true
+  check_mode: no
+  when: "nessus_installed.rc == 1"
+  changed_when: false
+
 - name: "Install latest Nessus"
   apt:
     deb: https://www.tenable.com/downloads/api/v2/pages/nessus/files/Nessus-latest-debian10_amd64.deb
   become: true
   become_method: sudo
-  when: nessus_installed.rc == 1
+  when: nessus_installed.rc == 2
 
 - name: "Register Nessus"
   shell: /opt/nessus/sbin/nessuscli fetch --register '{{NESSUS_KEY}}'
