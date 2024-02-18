@@ -18,7 +18,7 @@
   become: true
   become_method: sudo
 
-  - name: "Add user to Nessus"
+- name: "Add user to Nessus"
   ansible.builtin.expect:
       command: /opt/nessus/sbin/nessuscli adduser
       responses:
@@ -29,3 +29,4 @@
         '\(the user can have an empty rules set\)': ""    
   become: true
   become_method: sudo
+  ignore_errors: true
