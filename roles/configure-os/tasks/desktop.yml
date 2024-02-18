@@ -1,0 +1,3 @@
+---
+- name: "Set wallpaper"
+  shell: xfconf-query --channel xfce4-desktop --property /backdrop/screen0/monitorVirtual1/workspace0/last-image --set /usr/share/backgrounds/kali-16x9/kali-cubism.jpg
