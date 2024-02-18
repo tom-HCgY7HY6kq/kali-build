@@ -1,0 +1,65 @@
+---
+- name: Create temporary build directory
+  ansible.builtin.tempfile:
+    state: directory
+  register: build_dir
+
+- name: "Downloading install script"
+  get_url:
+    url: https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh
+    dest: "{{ build_dir.path }}/install.sh"
+    mode: 0755
+
+- name: Install for user
+  shell: "{{ build_dir.path }}/install.sh"
+
+- name: Install for root
+  shell: "{{ build_dir.path }}/install.sh"
+  become: true
+  become_method: sudo
+
+- name: Remove temporary build directory
+  ansible.builtin.file:
+    path: "{{ build_dir.path }}"
+    state: absent
+  when: build_dir.path is defined
+
+- name: "Installing fzf for user"
+  git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.location }}"
+  loop:
+    - { repo: "https://github.com/junegunn/fzf.git", location: "~/.fzf", depth: 1 }
+
+- name: "Installing fzf for root"
+  git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.location }}"
+  loop:
+    - { repo: "https://github.com/junegunn/fzf.git", location: "~/.fzf", depth: 1 }
+  become: true
+  become_method: sudo
+
+- name: Install fzf for user
+  shell: ~/.fzf/install --all
+
+- name: Install fzf for root
+  shell: ~/.fzf/install --all
+  become: true
+  become_method: sudo
+
+- name: Enable zoxide for user's shell.
+  lineinfile:
+    dest: "~/.zshrc"
+    line: |
+      export PATH=$PATH:~/.local/bin
+      eval "$(zoxide init --cmd cd zsh)"
+
+- name: Enable zoxide for root's shell.
+  lineinfile:
+    dest: "~/.zshrc"
+    line: |
+      export PATH=$PATH:~/.local/bin
+      eval "$(zoxide init --cmd cd zsh)"
+  become: true
+  become_method: sudo
