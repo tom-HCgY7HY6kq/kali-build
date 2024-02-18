@@ -1,0 +1,6 @@
+---
+- name: "Mount shared folders on boot."
+  ansible.builtin.cron:
+    name: "Mount shared folders on boot."
+    special_time: reboot
+    job: "/usr/local/bin/mount-shared-folders"
