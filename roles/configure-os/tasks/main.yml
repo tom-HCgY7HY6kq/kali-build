@@ -29,14 +29,9 @@
   become: true
   become_method: sudo
 
-# - name: "Copying keyboard layout"
-#   copy:
-#     src: "{{ role_path }}/files/etc_default_keyboard"
-#     dest: "/etc/default/keyboard"
-#   become: true
-#   become_method: sudo
-
-# - name: "Reset keyboard"
-#   shell: /usr/sbin/dpkg-reconfigure --frontend noninteractive keyboard-configuration
-#   become: true
-#   become_method: sudo
+- name: "Reset keyboard"
+  shell: |
+    echo "debconf keyboard-configuration/layout select English (UK)" | debconf-set-selections
+    echo "debconf keyboard-configuration/layoutcode  string gb" | debconf-set-selections
+  become: true
+  become_method: sudo
