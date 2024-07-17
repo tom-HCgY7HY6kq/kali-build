@@ -7,6 +7,9 @@
   check_mode: no
   changed_when: false
 
+#Init to user does not exist
+-set_fact: nessus_user_exists_stdout="0"
+
 - name: "Check if Nessus user exists"
   tags: dev
   shell: "/opt/nessus/sbin/nessuscli lsuser | wc -l"
@@ -16,14 +19,9 @@
   when: "nessus_installed.rc == 0"
   changed_when: false
 
-- name: "Fallback if nessus not install"
-  tags: dev
-  shell: "echo 0"
-  register: nessus_user_exists
-  become: true
-  check_mode: no
-  when: "nessus_installed.rc == 1"
-  changed_when: false
+# If nessus installed and user exists, set fact to stdout
+- set_fact: nessus_user_exists_stdout="{{nessus_user_exists.stdout}}"
+  when: "nessus_installed.rc == 0"
 
 - name: "Install latest Nessus"
   apt:
@@ -48,14 +46,14 @@
 
 - name: "Add user to Nessus"
   ansible.builtin.expect:
-      command: /opt/nessus/sbin/nessuscli adduser
-      responses:
-        (.*)Login:(.*): "{{NESSUS_USER}}"
-        (.*)Login password(.*): "{{NESSUS_PASS}}"
-        (.*)Login password(.*):': "{{NESSUS_PASS}}"
-        (.*)system administrator(.*): "y"
-        (.*)rules set(.*): "\n"
-        (.*)ok(.*): "y"
+    command: /opt/nessus/sbin/nessuscli adduser
+    responses:
+      (.*)Login:(.*): "{{NESSUS_USER}}"
+      (.*)Login password(.*): "{{NESSUS_PASS}}"
+      (.*)Login password(.*):': "{{NESSUS_PASS}}"
+      (.*)system administrator(.*): "y"
+      (.*)rules set(.*): "\n"
+      (.*)ok(.*): "y"
   become: true
   become_method: sudo
-  when: nessus_user_exists.stdout == "0"
+  when: nessus_user_exists_stdout == "0"
