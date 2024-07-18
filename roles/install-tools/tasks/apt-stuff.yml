@@ -7,8 +7,6 @@
     update_cache: no
   become: true
   become_method: sudo
-  args:
-    creates: /etc/apt/sources.list.d/kali.list
 
 - name: "Add debian package sources"
   apt_repository:
@@ -18,8 +16,6 @@
     update_cache: no
   become: true
   become_method: sudo
-  args:
-    creates: /etc/apt/sources.list.d/debian.list
 
 - name: "Updating apt repo/cache"
   apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
