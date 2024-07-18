@@ -3,19 +3,23 @@
   apt_repository:
     repo: "deb http://http.kali.org/kali kali-rolling main non-free non-free-firmware contrib"
     state: present
-    filename: "kali.list"
+    filename: "kali"
     update_cache: no
   become: true
   become_method: sudo
+  args:
+    creates: /etc/apt/sources.list.d/kali.list
 
 - name: "Add debian package sources"
   apt_repository:
     repo: "deb http://ftp.uk.debian.org/debian bookworm main"
     state: present
-    filename: "debian.list"
+    filename: "debian"
     update_cache: no
   become: true
   become_method: sudo
+  args:
+    creates: /etc/apt/sources.list.d/debian.list
 
 - name: "Updating apt repo/cache"
   apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
