@@ -4,7 +4,7 @@
     repo: "{{ item.repo }}"
     dest: "{{ item.location }}"
   loop:
-    - { repo: "https://github.com/Sab0tag3d/SIET.git", location: "/opt/SIET" }
+    - { repo: "https://github.com/Sab0tag3d/SIETpy3.git", location: "/opt/SIET" }
     - { repo: "https://github.com/felmoltor/DNSSnoopDogg.git", location: "/opt/DNSSnoopDogg" }
     - { repo: "https://github.com/droope/droopescan.git", location: "/opt/droopescan" }
     - { repo: "https://github.com/nccgroup/vlan-hopping---frogger.git", location: "/opt/frogger" }
