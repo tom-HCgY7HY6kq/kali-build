@@ -1,4 +1,22 @@
 ---
+- name: "Add kali package sources"
+  apt_repository:
+    repo: "deb http://http.kali.org/kali kali-rolling main non-free non-free-firmware contrib"
+    state: present
+    filename: "kali"
+    update_cache: no
+  become: true
+  become_method: sudo
+
+- name: "Add debian package sources"
+  apt_repository:
+    repo: "deb http://ftp.uk.debian.org/debian bookworm main"
+    state: present
+    filename: "debian"
+    update_cache: no
+  become: true
+  become_method: sudo
+
 - name: "Updating apt repo/cache"
   apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
   become: true
@@ -8,7 +26,7 @@
   apt: upgrade=yes force_apt_get=yes
   become: true
   become_method: sudo
-  
+
 - name: "Installing Packages"
   package:
     name:
