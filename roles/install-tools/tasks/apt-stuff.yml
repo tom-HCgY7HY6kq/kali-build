@@ -30,7 +30,6 @@
 - name: "Installing Packages"
   package:
     name:
-      - pipx
       - jq
       - crowbar
       - ridenum
