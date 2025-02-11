@@ -34,7 +34,6 @@
       - jq
       - crowbar
       - ridenum
-      - rsh-client
       - atool
       - seclists
       - remmina
